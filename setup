@@ -1,0 +1,25 @@
+#!/bin/sh
+
+# By donosonaumczuk
+
+echo "\e[1mInstalling clang-format\e[0m\n"
+sudo apt-get install clang-format-7
+
+echo "\n\n"
+echo "\e[1mInstalling clang-tidy\e[0m\n"
+sudo apt-get install clang-tidy-7
+
+echo "\n\n"
+echo "\e[1mInstalling cppcheck\e[0m\n"
+sudo apt-get install cppcheck
+
+echo "\n\n"
+echo "\e[1mUpgrading/Installing git\e[0m\n"
+echo "\e[1mAdding git apt repository\e[0m\n"
+sudo add-apt-repository ppa:git-core/ppa
+echo "\e[1mRunning apt-get update\e[0m\n"
+sudo apt-get update
+echo "\e[1mInstalling git\e[0m\n"
+sudo apt-get install git
+
+git config core.hooksPath .hooks
