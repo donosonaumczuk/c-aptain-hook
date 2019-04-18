@@ -8,4 +8,8 @@ Base repository to setup git pre-commit hook for C Language projects. Use cppche
 * [cland-tidy](https://clang.llvm.org/extra/index.html)
 * [How to setup git hooks](https://www.darrenlester.com/blog/including-hooks-in-a-git-repository)
 
+## How to setup
+
+Clone the repository and just run the `setup` script!
+
 Is possible that you may need to give execution permission to hooks files
