@@ -4,13 +4,13 @@
 
 zero=0
 
-./pre-commit-clang-format
+.hooks/pre-commit-clang-format
 clang_format_output=$?
 
-./pre-commit-clang-tidy
+.hooks/pre-commit-clang-tidy
 clang_tidy_output=$?
 
-./pre-commit-cppcheck
+.hooks/pre-commit-cppcheck
 cppcheck_output=$?
 
 if [ "$clang_format_output" -ne "$zero" ]; then
