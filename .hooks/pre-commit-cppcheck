@@ -1,0 +1,37 @@
+#!/bin/sh
+
+# From official cppcheck repository https://github.com/danmar/cppcheck
+# Modified by donosonaumczuk to verify if cppcheck is intalled and check
+# only for C files (.c format)
+
+command -v cppcheck >/dev/null 2>&1 || {
+	echo >&2 "\e[31m[CPPCHECK-HOOK] Rejects commit: cppcheck required but it
+	isn't installed.\e[0m\n\n";
+	exit 1;
+}
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+# We should pass only added or modified files with .c formats
+changed_files=$(git diff-index --cached $against | \
+	grep -E '[MA]	.*\.(c)$' | cut -f 2)
+cppcheck_answer=0
+
+if [ -n "$changed_files" ]; then
+	cppcheck --error-exitcode=1 $changed_files
+	cppcheck_answer=$?
+fi
+
+if [ "$cppcheck_answer" -ne "0" ]; then
+	echo >&2 "\e[31m[CPPCHECK-HOOK] Rejects commit: fix things listed above.\e[0m\n\n"
+else
+	echo >&2 "\e[32m[CPPCHECK-HOOK] Accepts commit: everything looks fine.\e[0m\n\n"
+fi
+
+exit $cppcheck_answer
