@@ -1,0 +1,35 @@
+#!/bin/sh
+
+# By donosonaumczuk
+
+command -v clang-format-7 >/dev/null 2>&1 || {
+	echo >&2 "\e[31m[CLANG-FORMAT-HOOK] Rejects commit: clang-format-7 required but it isn't installed.\e[0m\n\n";
+	exit 1;
+}
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+# We should pass only added or modified files with .c or .h formats
+changed_files=$(git diff-index --cached $against | \
+	grep -E '[MA]	.*\.(c|h)$' | cut -f 2)
+
+# Run clang-format, modifie files and output modifications in xml format
+clang-format-7 -style=file -output-replacements-xml $changed_files |
+grep "<replacement " >/dev/null
+
+if [ $? -ne 1 ]; then
+	# Modify files inplace
+	clang-format-7 -style=file -i $changed_files
+    echo >&2 "\e[31m[CLANG-FORMAT-HOOK] Rejects commit: files did not match clang-format defined style.\e[0m"
+	echo >&2 "\e[33m[CLANG-FORMAT-HOOK] Files reformated automatically to match the defined style.\e[0m\n\n"
+    exit 1
+fi
+
+echo >&2 "\e[32m[CLANG-FORMAT-HOOK] Accepts commit: style format matched.\e[0m\n\n"
+exit 0
