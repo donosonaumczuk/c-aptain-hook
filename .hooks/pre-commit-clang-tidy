@@ -1,0 +1,31 @@
+#!/bin/sh
+
+# By donosonaumczuk
+
+command -v clang-tidy-7 >/dev/null 2>&1 || {
+	echo >&2 "\e[31m[CLANG-TIDY-HOOK] Rejects commit: clang-tidy-7 required but it isn't installed.\e[0m\n\n";
+	exit 1;
+}
+
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=4b825dc642cb6eb9a060e54bf8d69288fbee4904
+fi
+
+# We should pass only added or modified files with .c or .h formats
+changed_files=$(git diff-index --cached $against | \
+	grep -E '[MA]	.*\.(c|h)$' | cut -f 2)
+
+# Run clang-tidy
+clang-tidy-7 $changed_files --
+
+if [ $? -ne 0 ]; then
+    echo >&2 "\e[31m[CLANG-TIDY-HOOK] Rejects commit: fix things listed above.\e[0m\n\n"
+    exit 1
+fi
+
+echo >&2 "\e[32m[CLANG-TIDY-HOOK] Accepts commit: everything looks fine.\e[0m\n\n"
+exit 0
