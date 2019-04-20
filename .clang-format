@@ -31,6 +31,7 @@ Language: Cpp
 MaxEmptyLinesToKeep: 1
 PointerAlignment: Right # Not allow the "void * pointer" notation :(
 ReflowComments: true
+SortIncludes: false
 SpaceAfterCStyleCast: true
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeParens: ControlStatements
